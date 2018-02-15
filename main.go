@@ -10,22 +10,22 @@ import (
 
 
 func readCSVFromURL(target string) ([][]string, error) {
-	resp, err := http.Get(target)
+    resp, err := http.Get(target)
 
-	if err != nil {
+    if err != nil {
         return nil, err
-	}
+    }
 
-	defer resp.Body.Close()
+    defer resp.Body.Close()
 
-	reader := csv.NewReader(resp.Body)
-	data, err := reader.ReadAll()
+    reader := csv.NewReader(resp.Body)
+    data, err := reader.ReadAll()
 
-	if err != nil {
+    if err != nil {
         return nil, err
-	}
+    }
 
-	return data, nil
+    return data, nil
 }
 
 func prepareTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
@@ -64,9 +64,9 @@ func main() {
     dataURL   := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 
     data, err := readCSVFromURL(dataURL)
-	if err != nil {
+    if err != nil {
         panic(err)
-	}
+    }
 
     trainingSet, err := prepareTrainingSet(data)
     if err != nil {
