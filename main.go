@@ -135,12 +135,12 @@ func prepareTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
 func getTrainingSet(url string) ([]neurons.TrainingSetRow, error) {
     raw, err := maybeDownload(url)
     if err != nil {
-        panic(err)
+        return nil, err
     }
 
     strings, err := readCSVdata(bytes.NewReader(raw))
     if err != nil {
-        panic(err)
+        return nil, err
     }
 
     return prepareTrainingSet(strings)
@@ -149,6 +149,7 @@ func getTrainingSet(url string) ([]neurons.TrainingSetRow, error) {
 
 func main() {
     dataUrl := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+
     trainingSet, err := getTrainingSet(dataUrl)
     if err != nil {
         panic(err)
