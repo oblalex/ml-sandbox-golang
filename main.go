@@ -73,8 +73,8 @@ func main() {
         panic(err)
     }
 
-    p := neurons.NewPerceptron(2, 10, 0.1)
-    p.Retrain(trainingSet)
+    p := neurons.NewPerceptron(2, 10, 0.1)    
+    p.Train(trainingSet)
 
     fmt.Printf(
         "features number   = %d\n" +
