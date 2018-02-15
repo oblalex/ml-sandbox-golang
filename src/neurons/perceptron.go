@@ -43,7 +43,9 @@ func (p *Perceptron) Reset() {
         p.weightFeatures[i] = 0
     }
 
-    p.Errors = make([]int, p.IterationsNumber)
+    if len(p.Errors) == 0 {
+        p.Errors = make([]int, p.IterationsNumber)
+    }
     for i := range p.Errors {
         p.Errors[i] = 0
     }
