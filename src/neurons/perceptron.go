@@ -28,7 +28,7 @@ func NewPerceptron(
 }
 
 
-func Reset(p *Perceptron) {
+func (p *Perceptron) Reset() {
     for i := range p.Weights {
         p.Weights[i] = 0
     }
@@ -40,14 +40,14 @@ func Reset(p *Perceptron) {
 }
 
 
-func Retrain(p *Perceptron, trainingSet []TrainingSetRow) {
-    Reset(p)
+func (p *Perceptron) Retrain(trainingSet []TrainingSetRow) {
+    p.Reset()
 
     for i := 0; i < p.IterationsNumber; i++ {
         errors := 0
 
         for _, row := range trainingSet {
-            prediction := Predict(p, row.Features)
+            prediction := p.Predict(row.Features)
             dw0 := p.LearningStep * float64(row.Label - prediction)
 
             p.Weights[0] += dw0
@@ -65,8 +65,9 @@ func Retrain(p *Perceptron, trainingSet []TrainingSetRow) {
 }
 
 
-func Predict(p *Perceptron, features FeaturesRow) int8 {
-    netInput := NetInput(p, features)
+func (p *Perceptron) Predict(features FeaturesRow) int8 {
+    netInput := p.NetInput(features)
+
     if netInput >= 0 {
         return 1
     } else {
@@ -75,7 +76,7 @@ func Predict(p *Perceptron, features FeaturesRow) int8 {
 }
 
 
-func NetInput(p *Perceptron, features FeaturesRow) float64 {
+func (p *Perceptron) NetInput(features FeaturesRow) float64 {
     result := p.Weights[0]
 
     for i := 0; i < p.FeaturesNumber; i++ {

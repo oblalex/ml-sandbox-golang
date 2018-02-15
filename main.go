@@ -109,7 +109,7 @@ func main() {
     }
     p := neurons.NewPerceptron(2, 10, 0.1)
 
-    neurons.Retrain(p, trainingSet)
+    p.Retrain(trainingSet)
 
     fmt.Printf(
         "features number   = %d\n" +
@@ -124,9 +124,9 @@ func main() {
         p.Errors,
     )
 
-    prediction := neurons.Predict(p, []float64{4.0, 2.0})
+    prediction := p.Predict([]float64{4.0, 2.0})
     fmt.Printf("prediction 1: %+1d, expected +1\n", prediction)
 
-    prediction = neurons.Predict(p, []float64{4.0, 1.0})
+    prediction = p.Predict([]float64{4.0, 1.0})
     fmt.Printf("prediction 2: %+1d, expected -1\n", prediction)
 }
