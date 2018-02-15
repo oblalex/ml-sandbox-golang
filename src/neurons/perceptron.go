@@ -48,7 +48,7 @@ func (p *Perceptron) Retrain(trainingSet []TrainingSetRow) {
 
         for _, row := range trainingSet {
             prediction := p.Predict(row.Features)
-            dw0 := p.LearningStep * float64(row.Label - prediction)
+            dw0 := p.LearningStep * (row.Label - prediction)
 
             p.Weights[0] += dw0
             for i := 0; i < p.FeaturesNumber; i++ {
@@ -65,7 +65,7 @@ func (p *Perceptron) Retrain(trainingSet []TrainingSetRow) {
 }
 
 
-func (p *Perceptron) Predict(features FeaturesRow) int8 {
+func (p *Perceptron) Predict(features FeaturesRow) float64 {
     netInput := p.NetInput(features)
 
     if netInput >= 0 {

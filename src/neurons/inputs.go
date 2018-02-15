@@ -5,5 +5,5 @@ type FeaturesRow []float64
 
 type TrainingSetRow struct {
     Features FeaturesRow
-    Label    int8
+    Label    float64
 }
