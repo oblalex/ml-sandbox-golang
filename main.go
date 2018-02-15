@@ -13,7 +13,7 @@ func readCSVFromURL(target string) ([][]string, error) {
 	resp, err := http.Get(target)
 
 	if err != nil {
-		return nil, err
+        return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -22,7 +22,7 @@ func readCSVFromURL(target string) ([][]string, error) {
 	data, err := reader.ReadAll()
 
 	if err != nil {
-		return nil, err
+        return nil, err
 	}
 
 	return data, nil
@@ -65,7 +65,7 @@ func main() {
 
     data, err := readCSVFromURL(dataURL)
 	if err != nil {
-		panic(err)
+        panic(err)
 	}
 
     trainingSet, err := prepareTrainingSet(data)

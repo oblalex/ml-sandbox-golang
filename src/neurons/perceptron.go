@@ -30,9 +30,9 @@ func NewPerceptron(
 
 
 func (p *Perceptron) Weights() []float64 {
-	result := make([]float64, p.FeaturesNumber + 1)
-	result[0] = p.weight0
-	copy(result[1:], p.weightFeatures[:])
+    result := make([]float64, p.FeaturesNumber + 1)
+    result[0] = p.weight0
+    copy(result[1:], p.weightFeatures[:])
     return result
 }
 
