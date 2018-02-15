@@ -1,114 +1,70 @@
 package main
 
-import "fmt"
-import "neurons"
+import (
+    "encoding/csv"
+    "fmt"
+    "net/http"
+    "neurons"
+    "strconv"
+)
+
+
+func readCSVFromURL(target string) ([][]string, error) {
+	resp, err := http.Get(target)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	reader := csv.NewReader(resp.Body)
+	data, err := reader.ReadAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
 
 
 func main() {
-    trainingSet := []neurons.TrainingSetRow{
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.9, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.7, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.6, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 1.7}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.6, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.4, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.9, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.8, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.8, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.3, 1.1}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.8, 1.2}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 1.7}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 1.7}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.6, 1.0}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.7}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.8, 1.9}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.2, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.2, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.7, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.8, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.2, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.9, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.2}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.9, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.4, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.5, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.4, 1.3}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.9}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.8, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 1.6}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.6, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.3, 1.5}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 1.4}, -1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{7.0, 4.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.4, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.9, 4.9}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 4.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.5, 4.6}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.3, 4.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{4.9, 3.3}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.6, 4.6}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.2, 3.9}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 3.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.9, 4.2}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.0, 4.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.1, 4.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.6, 3.6}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.7, 4.4}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.6, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.8, 4.1}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.2, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.6, 3.9}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.9, 4.8}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.1, 4.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.3, 4.9}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.1, 4.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.4, 4.3}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.6, 4.4}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.8, 4.8}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.7, 5.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.0, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 3.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 3.8}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 3.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.8, 3.9}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.0, 5.1}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.4, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.0, 4.5}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.7, 4.7}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.3, 4.4}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.6, 4.1}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 4.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.5, 4.4}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.1, 4.6}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.8, 4.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.0, 3.3}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.6, 4.2}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 4.2}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 4.2}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{6.2, 4.3}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.1, 3.0}, 1},
-        neurons.TrainingSetRow{neurons.FeaturesRow{5.7, 4.1}, 1},
-    }
-    p := neurons.NewPerceptron(2, 10, 0.1)
+    dataURL := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 
+    data, err := readCSVFromURL(dataURL)
+	if err != nil {
+		panic(err)
+	}
+
+    trainingSet := make([]neurons.TrainingSetRow, 100)
+
+    for i, row := range data[:100] {
+        sepalLength, err := strconv.ParseFloat(row[0], 64)
+        if err != nil {
+    		panic(err)
+    	}
+
+        petalLength, err := strconv.ParseFloat(row[2], 64)
+        if err != nil {
+    		panic(err)
+    	}
+
+        var label float64
+
+        if row[4] == "Iris-setosa" {
+            label = -1.0
+        } else {
+            label = +1.0
+        }
+
+        trainingSet[i] = neurons.TrainingSetRow{
+            neurons.FeaturesRow{sepalLength, petalLength},
+            label,
+        }
+	}
+
+    p := neurons.NewPerceptron(2, 10, 0.1)
     p.Retrain(trainingSet)
 
     fmt.Printf(
