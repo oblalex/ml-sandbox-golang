@@ -28,27 +28,19 @@ func readCSVFromURL(target string) ([][]string, error) {
 	return data, nil
 }
 
-
-func main() {
-    dataURL := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-
-    data, err := readCSVFromURL(dataURL)
-	if err != nil {
-		panic(err)
-	}
-
-    trainingSet := make([]neurons.TrainingSetRow, 100)
+func prepareTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
+    result := make([]neurons.TrainingSetRow, 100)
 
     for i, row := range data[:100] {
         sepalLength, err := strconv.ParseFloat(row[0], 64)
         if err != nil {
-    		panic(err)
-    	}
+            return nil, err
+        }
 
         petalLength, err := strconv.ParseFloat(row[2], 64)
         if err != nil {
-    		panic(err)
-    	}
+            return nil, err
+        }
 
         var label float64
 
@@ -58,11 +50,28 @@ func main() {
             label = +1.0
         }
 
-        trainingSet[i] = neurons.TrainingSetRow{
+        result[i] = neurons.TrainingSetRow{
             neurons.FeaturesRow{sepalLength, petalLength},
             label,
         }
+    }
+
+    return result, nil
+}
+
+
+func main() {
+    dataURL   := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+
+    data, err := readCSVFromURL(dataURL)
+	if err != nil {
+		panic(err)
 	}
+
+    trainingSet, err := prepareTrainingSet(data)
+    if err != nil {
+        panic(err)
+    }
 
     p := neurons.NewPerceptron(2, 10, 0.1)
     p.Retrain(trainingSet)
