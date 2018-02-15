@@ -120,7 +120,7 @@ func main() {
         p.FeaturesNumber,
         p.IterationsNumber,
         p.LearningStep,
-        p.Weights,
+        p.Weights(),
         p.Errors,
     )
 

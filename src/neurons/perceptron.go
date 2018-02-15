@@ -5,7 +5,8 @@ type Perceptron struct {
     FeaturesNumber     int
     IterationsNumber   int
     LearningStep       float64
-    Weights          []float64
+    weight0            float64
+    weightFeatures   []float64
     Errors           []int
 }
 
@@ -20,17 +21,26 @@ func NewPerceptron(
     p.FeaturesNumber   = featuresNumber
     p.IterationsNumber = iterationsNumber
     p.LearningStep     = learningStep
-
-    p.Weights = make([]float64, featuresNumber + 1)
-    p.Errors  = make([]int, 0)
+    p.Errors           = make([]int, 0)
+    p.weight0          = 0
+    p.weightFeatures   = make([]float64, featuresNumber)
 
     return p
 }
 
 
+func (p *Perceptron) Weights() []float64 {
+	result := make([]float64, p.FeaturesNumber + 1)
+	result[0] = p.weight0
+	copy(result[1:], p.weightFeatures[:])
+    return result
+}
+
+
 func (p *Perceptron) Reset() {
-    for i := range p.Weights {
-        p.Weights[i] = 0
+    p.weight0 = 0
+    for i := range p.weightFeatures {
+        p.weightFeatures[i] = 0
     }
 
     p.Errors = make([]int, p.IterationsNumber)
@@ -50,9 +60,10 @@ func (p *Perceptron) Retrain(trainingSet []TrainingSetRow) {
             predicted := p.Predict(row.Features)
             dw0 := p.LearningStep * (row.Expected - predicted)
 
-            p.Weights[0] += dw0
+            p.weight0 += dw0
+
             for i := 0; i < p.FeaturesNumber; i++ {
-                p.Weights[i + 1] += dw0 * row.Features[i]
+                p.weightFeatures[i] += dw0 * row.Features[i]
             }
 
             if dw0 != 0 {
@@ -77,10 +88,10 @@ func (p *Perceptron) Predict(features FeaturesRow) float64 {
 
 
 func (p *Perceptron) NetInput(features FeaturesRow) float64 {
-    result := p.Weights[0]
+    result := p.weight0
 
     for i := 0; i < p.FeaturesNumber; i++ {
-        result += p.Weights[i + 1] * features[i]
+        result += p.weightFeatures[i] * features[i]
     }
 
     return result
