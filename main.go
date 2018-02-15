@@ -124,9 +124,9 @@ func main() {
         p.Errors,
     )
 
-    prediction := p.Predict(neurons.FeaturesRow{4.0, 2.0})
-    fmt.Printf("prediction 1: %+1.0f, expected +1\n", prediction)
+    predicted := p.Predict(neurons.FeaturesRow{4.0, 2.0})
+    fmt.Printf("predicted 1: %+1.0f, expected: +1\n", predicted)
 
-    prediction = p.Predict(neurons.FeaturesRow{4.0, 1.0})
-    fmt.Printf("prediction 2: %+1.0f, expected -1\n", prediction)
+    predicted = p.Predict(neurons.FeaturesRow{4.0, 1.0})
+    fmt.Printf("predicted 2: %+1.0f, expected: -1\n", predicted)
 }

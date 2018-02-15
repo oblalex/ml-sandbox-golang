@@ -47,8 +47,8 @@ func (p *Perceptron) Retrain(trainingSet []TrainingSetRow) {
         errors := 0
 
         for _, row := range trainingSet {
-            prediction := p.Predict(row.Features)
-            dw0 := p.LearningStep * (row.Label - prediction)
+            predicted := p.Predict(row.Features)
+            dw0 := p.LearningStep * (row.Expected - predicted)
 
             p.Weights[0] += dw0
             for i := 0; i < p.FeaturesNumber; i++ {
