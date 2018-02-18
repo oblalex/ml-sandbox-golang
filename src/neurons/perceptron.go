@@ -59,15 +59,15 @@ func (p *Perceptron) Train(trainingSet []TrainingSetRow) {
 
         for _, row := range trainingSet {
             predicted := p.Predict(row.Features)
-            dw0 := p.LearningStep * (row.Expected - predicted)
+            cost := p.LearningStep * (row.Expected - predicted)
 
-            p.weight0 += dw0
+            p.weight0 += cost
 
             for i := 0; i < p.FeaturesNumber; i++ {
-                p.weightFeatures[i] += dw0 * row.Features[i]
+                p.weightFeatures[i] += cost * row.Features[i]
             }
 
-            if dw0 != 0 {
+            if cost != 0 {
                 errors += 1
             }
         }
