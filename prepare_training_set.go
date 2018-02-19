@@ -18,6 +18,14 @@ import (
 import "neurons"
 
 
+const (
+    DATA_SET_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+    DATA_DIR_PATH = "./data"
+    OUTPUT_FILE_PATH = DATA_DIR_PATH + "/" + "training-set"
+    CACHE_DIR_PATH = "./.cache"
+)
+
+
 func getStringHash(s string) (string) {
     h := sha1.New()
     h.Write([]byte(s))
@@ -29,7 +37,6 @@ func getURLHash(url string) (string) {
     s := strings.SplitN(url, "://", 2)
     return getStringHash(s[1])
 }
-
 
 func downloadData(url string) ([]byte, error) {
     response, err := http.Get(url)
@@ -44,6 +51,7 @@ func downloadData(url string) ([]byte, error) {
     }
     return data, nil
 }
+
 
 func storeData(filePath string, data []byte) (error) {
     dirPath := filepath.Dir(filePath)
@@ -65,9 +73,8 @@ func storeData(filePath string, data []byte) (error) {
 
 
 func maybeDownload(url string) ([]byte, error) {
-    cacheDir := ".cache"
     fileName := getURLHash(url)
-    filePath := fmt.Sprintf("%s/%s", cacheDir, fileName)
+    filePath := fmt.Sprintf("%s/%s", CACHE_DIR_PATH, fileName)
 
     data, err := ioutil.ReadFile(filePath)
     if err != nil {
@@ -99,7 +106,7 @@ func readCSVdata(reader io.Reader) ([][]string, error) {
 }
 
 
-func prepareTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
+func buildTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
     result := make([]neurons.TrainingSetRow, 100)
 
     for i, row := range data[:100] {
@@ -132,48 +139,63 @@ func prepareTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
 }
 
 
-func getTrainingSet(url string) ([]neurons.TrainingSetRow, error) {
-    raw, err := maybeDownload(url)
-    if err != nil {
-        return nil, err
+func storeTrainingSet(
+    trainingSet []neurons.TrainingSetRow,
+    filePath string,
+) (error) {
+    dirPath := filepath.Dir(filePath)
+    if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+
+        err := os.Mkdir(dirPath, 0755)
+        if err != nil {
+            return err
+        }
     }
 
-    strings, err := readCSVdata(bytes.NewReader(raw))
+    file, err := os.Create(filePath)
     if err != nil {
-        return nil, err
+        return err
+    }
+    defer file.Close()
+
+    writer := csv.NewWriter(file)
+    defer writer.Flush()
+
+    for _, row := range trainingSet {
+        data := []string{
+            strconv.FormatFloat(row.Features[0], 'f', -1, 64),
+            strconv.FormatFloat(row.Features[1], 'f', -1, 64),
+            strconv.FormatFloat(row.Expected,    'f', -1, 64),
+        }
+
+        err := writer.Write(data)
+        if err != nil {
+            return err
+        }
     }
 
-    return prepareTrainingSet(strings)
+    return nil
 }
 
 
 func main() {
-    dataUrl := "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-
-    trainingSet, err := getTrainingSet(dataUrl)
+    raw, err := maybeDownload(DATA_SET_URL)
     if err != nil {
         panic(err)
     }
 
-    p := neurons.NewPerceptron(2, 10, 0.1)
-    p.Train(trainingSet)
+    strings, err := readCSVdata(bytes.NewReader(raw))
+    if err != nil {
+        panic(err)
+    }
 
-    fmt.Printf(
-        "features number   = %d\n" +
-        "iterations number = %d\n" +
-        "learning step     = %f\n" +
-        "weights           = %v\n" +
-        "errors            = %v\n",
-        p.FeaturesNumber,
-        p.IterationsNumber,
-        p.LearningStep,
-        p.Weights(),
-        p.Errors,
-    )
+    trainingSet, err := buildTrainingSet(strings)
+    if err != nil {
+        panic(err)
+    }
 
-    predicted := p.Predict(neurons.FeaturesRow{4.0, 2.0})
-    fmt.Printf("predicted 1: %+1.0f, expected: +1\n", predicted)
-
-    predicted = p.Predict(neurons.FeaturesRow{4.0, 1.0})
-    fmt.Printf("predicted 2: %+1.0f, expected: -1\n", predicted)
+    err = storeTrainingSet(trainingSet, OUTPUT_FILE_PATH)
+    if err != nil {
+        panic(err)
+    }
 }
