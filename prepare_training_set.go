@@ -106,8 +106,8 @@ func readCSVdata(reader io.Reader) ([][]string, error) {
 }
 
 
-func buildTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
-    result := make([]neurons.TrainingSetRow, 100)
+func buildTrainingSet(data [][]string) (neurons.LabeledFeaturesSeries, error) {
+    result := make(neurons.LabeledFeaturesSeries, 100)
 
     for i, row := range data[:100] {
 
@@ -129,7 +129,7 @@ func buildTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
             label = +1.0
         }
 
-        result[i] = neurons.TrainingSetRow{
+        result[i] = neurons.LabeledFeaturesRow{
             neurons.FeaturesRow{sepalLength, petalLength},
             label,
         }
@@ -140,7 +140,7 @@ func buildTrainingSet(data [][]string) ([]neurons.TrainingSetRow, error) {
 
 
 func storeTrainingSet(
-    trainingSet []neurons.TrainingSetRow,
+    trainingSet neurons.LabeledFeaturesSeries,
     filePath string,
 ) (error) {
     dirPath := filepath.Dir(filePath)
@@ -165,7 +165,7 @@ func storeTrainingSet(
         data := []string{
             strconv.FormatFloat(row.Features[0], 'f', -1, 64),
             strconv.FormatFloat(row.Features[1], 'f', -1, 64),
-            strconv.FormatFloat(row.Expected,    'f', -1, 64),
+            strconv.FormatFloat(row.Label,       'f', -1, 64),
         }
 
         err := writer.Write(data)

@@ -18,13 +18,13 @@ const (
 )
 
 
-func loadTrainingSet(filePath string) ([]neurons.TrainingSetRow, error) {
+func loadTrainingSet(filePath string) (neurons.LabeledFeaturesSeries, error) {
     file, err := os.Open(filePath)
     if err != nil {
         return nil, err
     }
 
-    var result []neurons.TrainingSetRow
+    var result neurons.LabeledFeaturesSeries
     reader := csv.NewReader(bufio.NewReader(file))
 
     for {
@@ -51,7 +51,7 @@ func loadTrainingSet(filePath string) ([]neurons.TrainingSetRow, error) {
             return nil, err
         }
 
-        result = append(result, neurons.TrainingSetRow{
+        result = append(result, neurons.LabeledFeaturesRow{
             neurons.FeaturesRow{sepalLength, petalLength},
             label,
         })

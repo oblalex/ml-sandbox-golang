@@ -53,13 +53,13 @@ func (p *Perceptron) Reset() {
 }
 
 
-func (p *Perceptron) Train(trainingSet []TrainingSetRow) {
+func (p *Perceptron) Train(trainingSet LabeledFeaturesSeries) {
     for i := 0; i < p.IterationsNumber; i++ {
         errors := 0
 
         for _, row := range trainingSet {
             predicted := p.Predict(row.Features)
-            cost := p.LearningStep * (row.Expected - predicted)
+            cost := p.LearningStep * (row.Label - predicted)
 
             p.weight0 += cost
 

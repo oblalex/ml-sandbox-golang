@@ -3,7 +3,9 @@ package neurons
 
 type FeaturesRow []float64
 
-type TrainingSetRow struct {
+type LabeledFeaturesRow struct {
     Features FeaturesRow
-    Expected float64
+    Label    float64
 }
+
+type LabeledFeaturesSeries []LabeledFeaturesRow
