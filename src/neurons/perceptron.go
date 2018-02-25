@@ -21,8 +21,6 @@ func NewPerceptron(
     p.FeaturesNumber   = featuresNumber
     p.IterationsNumber = iterationsNumber
     p.LearningStep     = learningStep
-
-    p.Errors           = make([]int, 0)
     p.weightFeatures   = make([]float64, featuresNumber)
 
     p.Reset()
@@ -44,7 +42,7 @@ func (p *Perceptron) Reset() {
         p.weightFeatures[i] = 0
     }
 
-    if len(p.Errors) == 0 {
+    if p.Errors == nil {
         p.Errors = make([]int, p.IterationsNumber)
     }
     for i := range p.Errors {
