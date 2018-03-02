@@ -69,25 +69,24 @@ func getTrainingSetBoundaries(
     minSepalLength, maxSepalLength float64,
     minPetalLength, maxPetalLength float64,
 ) {
-    maxSepalLength, maxPetalLength = 0.0, 0.0
+    minSepalLength = trainingSet[0].Features[0]
+    maxSepalLength = minSepalLength
 
-    for _, row := range trainingSet {
-        if row.Features[0] > maxSepalLength {
-            maxSepalLength = row.Features[0]
-        }
-        if row.Features[1] > maxPetalLength {
-            maxPetalLength = row.Features[1]
-        }
-    }
-
-    minSepalLength, minPetalLength = maxSepalLength, maxPetalLength
+    minPetalLength = trainingSet[0].Features[1]
+    maxPetalLength = minPetalLength
 
     for _, row := range trainingSet {
         if row.Features[0] < minSepalLength {
             minSepalLength = row.Features[0]
         }
+        if row.Features[0] > maxSepalLength {
+            maxSepalLength = row.Features[0]
+        }
         if row.Features[1] < minPetalLength {
             minPetalLength = row.Features[1]
+        }
+        if row.Features[1] > maxPetalLength {
+            maxPetalLength = row.Features[1]
         }
     }
 
